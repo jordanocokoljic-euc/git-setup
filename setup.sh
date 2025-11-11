@@ -11,22 +11,22 @@ prompt() {
   fi
 }
 
-if ! command -v op &>/dev/null; then
+if ! command -v op >/dev/null; then
   echo '"op" not found, please install with: brew install 1password-cli'
   exit 1
 fi
 
-if ! command -v gh &>/dev/null; then
+if ! command -v gh >/dev/null; then
   echo '"gh" not found, please install with: brew install gh'
   exit 1
 fi
 
-if ! command -v git &>/dev/null; then
+if ! command -v git >/dev/null; then
   echo '"git" not found, please install with: brew install git'
   exit 1
 fi
 
-if ! gh auth status &>/dev/null; then
+if ! gh auth status >/dev/null; then
   echo 'Please authenticate with GitHub: gh auth login --git-protocol ssh --hostname github.com --skip-ssh-key --web -s admin:public_key'
   exit 1
 fi
@@ -44,11 +44,11 @@ if [ -n "$set_email" ]; then git_email="$set_email"; fi
 git config --global user.name "$git_name"
 git config --global user.email "$git_email"
 
-op item create --category ssh --title 'GitHub SSH Key' --vault 'Employee' &>/dev/null
+op item create --category ssh --title 'GitHub SSH Key' --vault 'Employee' >/dev/null
 echo 'Created SSH Key in 1Password'
 
 pub_key="$(op item get 'GitHub SSH Key' --fields 'public key')"
-echo "$pub_key" | gh ssh-key add --title '1Password SSH Key' &>/dev/null
+echo "$pub_key" | gh ssh-key add --title '1Password SSH Key' >/dev/null
 echo 'Added SSH Key to GitHub'
 
 echo "$git_email $pub_key" >> ~/.config/git/allowed_signers
