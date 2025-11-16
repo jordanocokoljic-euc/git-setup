@@ -44,11 +44,11 @@ if [ -n "$set_email" ]; then git_email="$set_email"; fi
 git config --global user.name "$git_name"
 git config --global user.email "$git_email"
 
-op item create --category ssh --title 'GitHub SSH Key' --vault 'Employee' >/dev/null
+op item create --category ssh --title 'GitHub SSH Key' --vault 'Employee' >/dev/null </dev/tty
 echo 'Created SSH Key in 1Password'
 
 pub_key="$(op item get 'GitHub SSH Key' --fields 'public key')"
-echo "$pub_key" | gh ssh-key add --title '1Password SSH Key' >/dev/null
+echo "$pub_key" | gh ssh-key add --title '1Password SSH Key' >/dev/null 2>/dev/null
 echo 'Added SSH Key to GitHub'
 
 echo "$git_email $pub_key" >> ~/.config/git/allowed_signers
@@ -61,5 +61,15 @@ echo 'Configured Git to use the SSH key for signing commits'
 
 git config --global init.defaultBranch main
 
-echo 'Please configure SSO for the 1Password SSH Key in GitHub to authorise it for use in the Eucalyptus organization: https://github.com/settings/keys'
-echo 'Please check that SSH signing has been configured correctly: https://github.com/jordanocokoljic-euc/git-setup-check'
+cat <<'EOF'
+
+Please configure SSO for the '1Password SSH Key' in GitHub to authorise
+it for use within the Eucalyptus organization:
+
+  https://github.com/settings/keys
+
+Please confirm that SSH signing has been configured correctly:
+
+  https://github.com/jordanocokoljic-euc/git-setup-check
+
+EOF
