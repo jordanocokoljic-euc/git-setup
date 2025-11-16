@@ -3,56 +3,58 @@
 set -eu
 
 prompt() {
-  printf '%s ' "$1"
-  if [ -r /dev/tty ]; then
-    IFS= read -r "$2" < /dev/tty
-  else
-    IFS= read -r "$2" || true
-  fi
+	printf '%s ' "$1"
+	if [ -r /dev/tty ]; then
+		IFS= read -r "$2" < /dev/tty
+	else
+		IFS= read -r "$2" || true
+	fi
 }
 
 if ! command -v op >/dev/null; then
-  echo '"op" not found, please install with: brew install 1password-cli'
-  exit 1
+	echo '"op" not found, please install with: brew install 1password-cli'
+	exit 1
 fi
 
 if ! command -v gh >/dev/null; then
-  echo '"gh" not found, please install with: brew install gh'
-  exit 1
+	echo '"gh" not found, please install with: brew install gh'
+	exit 1
 fi
 
 if ! command -v git >/dev/null; then
-  echo '"git" not found, please install with: brew install git'
-  exit 1
+	echo '"git" not found, please install with: brew install git'
+	exit 1
 fi
 
 if ! command -v jq >/dev/null; then
-  echo '"jq" not found, please install with: brew install jq'
-  exit 1
+	echo '"jq" not found, please install with: brew install jq'
+	exit 1
 fi
 
 auth_status="$(gh auth status --json hosts --hostname github.com 2>/dev/null)"
 
 if [ "$(echo "$auth_status" | jq '.hosts["github.com"] | length')" -eq 0 ]; then
-  cat<<'EOF'
-Please authenticate the GitHub CLI with the following command:
+	cat<<-'EOF'
+	Please authenticate the GitHub CLI with the following command:
 
-  gh auth login --git-protocol ssh --hostname github.com --skip-ssh-key --web -s admin:public_key
+	  gh auth login --git-protocol ssh --hostname github.com --skip-ssh-key --web -s admin:public_key
 
-EOF
-  exit 1
+	EOF
+
+	exit 1
 fi
 
 if ! echo "$auth_status" | jq -e '.hosts["github.com"][] | select(.scopes | contains("admin:public_key"))' >/dev/null 2>&1; then
-  cat<<'EOF'
-Current GitHub CLI authentication token does not have the required
-"admin:public_key" scope. Please re-authenticate using the following
-command:
+	cat<<-'EOF'
+	Current GitHub CLI authentication token does not have the required
+	"admin:public_key" scope. Please re-authenticate using the following
+	command:
 
-  gh auth login --git-protocol ssh --hostname github.com --skip-ssh-key --web -s admin:public_key
+	  gh auth login --git-protocol ssh --hostname github.com --skip-ssh-key --web -s admin:public_key
 
-EOF
-  exit 1
+	EOF
+
+	exit 1
 fi
 
 git_name="$(id -F)"
@@ -85,7 +87,7 @@ echo 'Configured Git to use the SSH key for signing commits'
 
 git config --global init.defaultBranch main
 
-cat <<'EOF'
+cat <<-'EOF'
 
 Please configure SSO for the '1Password SSH Key' in GitHub to authorise
 it for use within the Eucalyptus organization:
