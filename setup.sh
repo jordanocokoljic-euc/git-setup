@@ -74,7 +74,8 @@ op item create --category ssh --title 'GitHub SSH Key' --vault 'Employee' >/dev/
 echo 'Created SSH Key in 1Password'
 
 pub_key="$(op item get 'GitHub SSH Key' --fields 'public key')"
-echo "$pub_key" | gh ssh-key add --title '1Password SSH Key' >/dev/null 2>/dev/null
+echo "$pub_key" | gh ssh-key add --title '1Password SSH Key' --type authentication >/dev/null 2>/dev/null
+echo "$pub_key" | gh ssh-key add --title '1Password SSH Key' --type signing >/dev/null 2>/dev/null
 echo 'Added SSH Key to GitHub'
 
 echo "$git_email $pub_key" >> ~/.config/git/allowed_signers
